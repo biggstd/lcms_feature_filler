@@ -1,0 +1,17 @@
+name: proteomics
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy
+  - pandas
+  - xarray
+  - patsy
+  - matplotlib
+  - seaborn
+  - rdkit
+  - scipy
+  - scikit-learn
+  - pip
+  - pip:
+    - pyopenms
