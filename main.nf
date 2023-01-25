@@ -20,7 +20,7 @@ process get_feature_info {
 
 
 process openms_filefilter_feature {
-  container = 'docker://docker-registry.phenomenal-h2020.eu/phnmnl/openms'
+  container = 'docker://phenomenal-h2020.eu/phnmnl/openms'
   input:
     tuple(path(feature_info), path(sample))
     // path "${info[0]}.mzML"
