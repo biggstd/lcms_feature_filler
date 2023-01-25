@@ -20,6 +20,7 @@ process get_feature_info {
 
 
 process openms_filefilter_feature {
+  conda "${params.conda_env}"
   input:
     tuple(path(feature_info), path(sample))
     // path "${info[0]}.mzML"
