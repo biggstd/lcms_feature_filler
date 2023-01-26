@@ -20,7 +20,7 @@ process get_feature_info {
 
 
 process openms_filefilter_feature {
-  container = 'docker://biocontainers/openms'
+  container = "${params.openms_container}"
   input:
     tuple(path(feature_info), path(sample))
     // path "${info[0]}.mzML"
