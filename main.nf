@@ -20,6 +20,7 @@ process get_feature_info {
 
 
 process openms_filefilter_feature {
+  container = "${params.openms_container}"
   input:
     tuple(path(feature_info), path(sample))
     // path "${info[0]}.mzML"
@@ -31,11 +32,6 @@ process openms_filefilter_feature {
   """
 }
 
-
-// while IFS=, read -r sample_id feature_id rtmin rtmax mzmin mzmax
-// do
-// FileFilter -in !{sample} -out ${sample_id}__${feature_id}.mzML -mz ${mzmin}:${mzmax} -rt ${rtmin]}:${rtmax} 
-// done < !{feature_info}
 
 
 /*******************************************************************************
@@ -93,29 +89,6 @@ df.to_csv("${feature}_coll.csv", index=False)
 """
 }
 
-
-
-
-/*******************************************************************************
-Plot Peaks
-----------
-
-Each selected peak from metaboigniter is plotted and saved.
-
-*******************************************************************************/
-// process plot_features {
-//   tag "${feature_data.baseName}"
-//   conda "${params.conda_env}"
-//   publishDir "${params.output_dir}/plots", mode: "move", overwrite: true
-//   input:
-//     file feature_data
-//   output:
-//     file "*.png"
-//   script:
-//     """
-//     plot_feature.py --file ${feature_data}
-//     """
-// }
 
 // // params.conda.enabled  = true
 // params.mi_results = "/home/tyer/gits/wsda-smoke-taint/06-feature_analysis/feature_data/AlxVly_01232018.nc"
