@@ -13,6 +13,7 @@ Extract feature data
 *******************************************************************************/
 process extract_feature_data {
   conda "${params.conda_env}"
+  memory '32 GB'
   input:
     file sample_file
     file features
@@ -39,7 +40,7 @@ Combine peak group CSV files
 
 *******************************************************************************/
 process collate_features {
-  // memory '120 GB'
+  memory '32 GB'
   conda "${params.conda_env}"
   // clusterOptions '--mem=200G'
   publishDir "${params.output_dir}/features", mode: "move", overwrite: true
