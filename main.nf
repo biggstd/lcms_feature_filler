@@ -14,14 +14,16 @@ Extract feature data
 process extract_feature_data {
   conda "${params.conda_env}"
   input:
-    each path(sample_feature_file)
+    file sample_file
+    file features
     file mi_results
   output:
     stdout emit: summations
     file '*.csv'
   script:
     """
-    collect_features.py --mi-results '${mi_results}' --sample-feature '${sample_feature_file}'
+    collect_features.py --mi-results '${mi_results}' --sample '${sample_file}' \
+    --features '${features}'
     """
 }
 
