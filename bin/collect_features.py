@@ -123,9 +123,10 @@ if __name__ == '__main__':
     sample_exp = pyopenms.MSExperiment()
     pyopenms.MzMLFile().load(str(sample_path), sample_exp)
 
-    try:
-        data = get_filled_features(feature, sample, mi_results, sample_exp)
-        if data is not None:
-            data.to_csv(f'{feature}.csv', index=False)
-    except IndexError as error:
-        print(",".join([sample, feature, "IndexError"]))
+    for feature in features:
+        try:
+            data = get_filled_features(feature, sample, mi_results, sample_exp)
+            if data is not None:
+                data.to_csv(f'{feature}.csv', index=False)
+        except IndexError as error:
+            print(",".join([sample, feature, "IndexError"]))
