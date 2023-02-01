@@ -4,21 +4,6 @@
 nextflow.enable.dsl=2
 
 
-process get_feature_info {
-  conda "${params.conda_env}"
-  input:
-    file sample
-    file feature_csv
-    file mi_results
-  output:
-    tuple( path("feature_info__*.csv"), path(sample) )
-  script:
-  """
-  emit_feature_info.py --mi-results '${mi_results}' --sample ${sample} --features '${feature_csv}'
-  """
-}
-
-
 /*******************************************************************************
 Extract feature data
 --------------------
