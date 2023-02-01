@@ -19,21 +19,6 @@ process get_feature_info {
 }
 
 
-process openms_filefilter_feature {
-  container = "${params.openms_container}"
-  input:
-    tuple(path(feature_info), path(sample))
-    // path "${info[0]}.mzML"
-  output:
-    file "*.mzML"
-  script:
-  """
-  openms_filefilter.sh '${feature_info}' '${sample}'
-  """
-}
-
-
-
 /*******************************************************************************
 Extract feature data
 --------------------
@@ -90,33 +75,24 @@ df.to_csv("${feature}_coll.csv", index=False)
 }
 
 
-// // params.conda.enabled  = true
-// params.mi_results = "/home/tyer/gits/wsda-smoke-taint/06-feature_analysis/feature_data/AlxVly_01232018.nc"
-// params.samples = "${baseDir}/test/samples.csv"
-// params.features = "${baseDir}/test/features.csv"
-// params.output_dir = "${baseDir}/output"
-// params.sample_dir = "/media/tyer/Gamma/wsda_smoke_data/"
-// params.conda_env = "/home/tyer/anaconda3/envs/pymc-3.11.4-py39"
-
 workflow {
 Channel.fromPath( params.samples )
     .splitText() { it.strip() }
     .map { name -> file("${params.sample_dir}/${name}.mzML") }
     .set { samples }
 
-get_feature_info(samples, file(params.features), file(params.mi_results))
-openms_filefilter_feature(get_feature_info.out)
-extract_feature_data(openms_filefilter_feature.out.collect().flatten(), file(params.mi_results))
-    
-extract_feature_data.out[0].collectFile(
-  name: 'filled_features.csv', 
-  newLine: true, 
-  storeDir: "${params.output_dir}")
+  extract_feature_data(samples, file ( params.features ), file ( params.mi_results ) )
 
-grouped_features = extract_feature_data.out[1].collect()
-  .flatten()
-  .map { file -> tuple( file.baseName, file) }
-  .groupTuple(by: 0)
+  extract_feature_data.out[0].collectFile(
+    name: 'filled_features.csv',
+    newLine: true,
+    storeDir: "${params.output_dir}")
 
-collated_features = collate_features(grouped_features)
+  grouped_features = extract_feature_data.out[1].collect()
+    .flatten()
+    .map { file -> tuple( file.baseName, file) }
+    .groupTuple(by: 0)
+
+  collated_features = collate_features(grouped_features)
+
 }
