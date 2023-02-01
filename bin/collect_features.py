@@ -108,17 +108,20 @@ def get_subset(rtmin, rtmax, mzmin, mzmax, exp):
 
 
 if __name__ == '__main__':
+  
     parser = argparse.ArgumentParser()
     parser.add_argument('--mi-results', type=str)
-    parser.add_argument('--sample-feature', type=str)
+    parser.add_argument('--sample', type=str)
+    parser.add_argument('--features', type=str)
     args = parser.parse_args()
-    sample_feature = str(args.sample_feature)
-    sample, feature = sample_feature.rsplit('__', 1)
-    feature = feature.rsplit('.', 1)[0]
+
+    sample_path = str(args.sample)
+    sample = str(args.sample).rsplit('.', 1)[0]
     mi_results = xr.open_dataset(args.mi_results)
+    features = pd.read_csv(args.features, header=None).values.flatten()
 
     sample_exp = pyopenms.MSExperiment()
-    pyopenms.MzMLFile().load(str(sample_feature), sample_exp)
+    pyopenms.MzMLFile().load(str(sample_path), sample_exp)
 
     try:
         data = get_filled_features(feature, sample, mi_results, sample_exp)
