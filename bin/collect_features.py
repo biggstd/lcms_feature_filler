@@ -57,7 +57,7 @@ def get_filled_features(feature_id, sample_id, mi_results, sample_exp,
     mz_detla = abs(fs_data['xcmsCamera_mz'].values - intensity_subset['mz'].unique())
     ppm_diff = mz_detla / fs_data['xcmsCamera_mz'].values * 1e6
     
-    print(intensity_subset)
+#     print(intensity_subset)
     
     if intensity_subset['mz'].nunique() > 1:
         
