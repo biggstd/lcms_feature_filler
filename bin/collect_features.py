@@ -7,7 +7,6 @@ import argparse
 import xarray as xr
 import pathlib
 import pyopenms
-
 def get_filled_features(feature_id, sample_id, mi_results, sample_exp, 
                         rt_pad_fact=0.0, rt_pad=15, mz_pad_inc=0.000025, ppm_tol=10):
     rt_adj_df = pd.DataFrame(
@@ -58,23 +57,24 @@ def get_filled_features(feature_id, sample_id, mi_results, sample_exp,
     mz_detla = abs(fs_data['xcmsCamera_mz'].values - intensity_subset['mz'].unique())
     ppm_diff = mz_detla / fs_data['xcmsCamera_mz'].values * 1e6
     
+    print(intensity_subset)
     
     if intensity_subset['mz'].nunique() > 1:
+        
         valid_mzs = ppm_diff <= ppm_tol
+        
+        if not any(valid_mzs):
+            print(",".join([sample_id, feature_id, "NaN"]))
+            return
+        
+        
         subset_mzs = intensity_subset['mz'].unique()[valid_mzs]
         subset_mz_diffs = np.abs(subset_mzs - fs_data['xcmsCamera_mz'].values)
-        feature_mz_diffs = np.abs(fs_data['xcmsCamera_mz'] - mi_results['xcmsCamera_mz']).values       
-        closer_features = np.any(subset_mz_diffs > feature_mz_diffs[:, None], axis=1)
-        closest_valid_mzs = subset_mzs[np.all(subset_mz_diffs < feature_mz_diffs[:, None], axis=0)]
+        intensity_subset = intensity_subset[intensity_subset['mz'] == valid_mzs[np.argmin(subset_mz_diffs)]]
         
-        if not closest_valid_mzs.size > 0:
-            print(",".join([sample_id, feature_id, "NaN"]))
-            return
-        
-        intensity_subset = intensity_subset[intensity_subset['xcmsCamera_mz'] == valid_mzs[np.argmin(subset_mz_diffs)]]
-        if intensity_subset.empty:
-            print(",".join([sample_id, feature_id, "NaN"]))
-            return
+    if intensity_subset.empty:
+        print(",".join([sample_id, feature_id, "NaN"]))
+        return
         
         
     if all(ppm_diff <= ppm_tol) & (intensity_subset['mz'].nunique() == 1):
