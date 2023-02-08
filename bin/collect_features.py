@@ -7,6 +7,8 @@ import argparse
 import xarray as xr
 import pathlib
 import pyopenms
+
+
 def get_filled_features(feature_id, sample_id, mi_results, sample_exp, 
                         rt_pad_fact=0.0, rt_pad=15, mz_pad_inc=0.000025, ppm_tol=10):
     rt_adj_df = pd.DataFrame(
@@ -73,9 +75,12 @@ def get_filled_features(feature_id, sample_id, mi_results, sample_exp,
         intensity_subset = intensity_subset[intensity_subset['mz'] == subset_mzs[np.argmin(subset_mz_diffs)]]
         sel_ppm = ppm_diff[np.argmin(subset_mz_diffs)]
 
-    if intensity_subset.empty:
+    elif intensity_subset.empty:
         print(",".join([sample_id, feature_id, "NaN"]))
         return
+    
+    elif intensity_subset['mz'].nunique() == 1:
+        sel_ppm = ppm_diff[0]
         
         
     if (sel_ppm <= ppm_tol) & (intensity_subset['mz'].nunique() == 1):
