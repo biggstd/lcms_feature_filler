@@ -70,7 +70,7 @@ def get_filled_features(feature_id, sample_id, mi_results, sample_exp,
         
         subset_mzs = intensity_subset['mz'].unique()[valid_mzs]
         subset_mz_diffs = np.abs(subset_mzs - fs_data['xcmsCamera_mz'].values)
-        intensity_subset = intensity_subset[intensity_subset['mz'] == valid_mzs[np.argmin(subset_mz_diffs)]]
+        intensity_subset = intensity_subset[intensity_subset['mz'] == subset_mzs[np.argmin(subset_mz_diffs)]]
         
     if intensity_subset.empty:
         print(",".join([sample_id, feature_id, "NaN"]))
