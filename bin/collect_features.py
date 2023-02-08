@@ -71,13 +71,14 @@ def get_filled_features(feature_id, sample_id, mi_results, sample_exp,
         subset_mzs = intensity_subset['mz'].unique()[valid_mzs]
         subset_mz_diffs = np.abs(subset_mzs - fs_data['xcmsCamera_mz'].values)
         intensity_subset = intensity_subset[intensity_subset['mz'] == subset_mzs[np.argmin(subset_mz_diffs)]]
-        
+        sel_ppm = ppm_diff[np.argmin(subset_mz_diffs)]
+
     if intensity_subset.empty:
         print(",".join([sample_id, feature_id, "NaN"]))
         return
         
         
-    if all(ppm_diff <= ppm_tol) & (intensity_subset['mz'].nunique() == 1):
+    if (sel_ppm <= ppm_tol) & (intensity_subset['mz'].nunique() == 1):
         intensity_subset['adjusted_elution_time'] = rt_adj_df['adjusted_elution_time'].iloc[
             new_min_idx:new_min_idx + intensity_subset.shape[0]].values
         intensity_subset['original_elution_time'] = rt_adj_df['original_elution_time'].iloc[
